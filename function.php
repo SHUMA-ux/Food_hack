@@ -2,7 +2,7 @@
 require_once("db_connect.php");
 
 function check_user_logged_in(){
-    if (empty($_SESSION["name"])) {
+    if (empty($_SESSION["user_id"])) {
         header("Location: 2_login.php");
         exit;
     }
@@ -79,7 +79,7 @@ function CheckUserData(){
 
             if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 if (password_verify($password, $row["password"])) {
-                    $_SESSION["user_id"] = $row['id'];
+                    $_SESSION["user_id"] = $row['user_id'];
                     $_SESSION["name"] = $row['name'];
                     $_SESSION["gender"] = $row['gender'];
                     $_SESSION["place"] = $row['id'];
@@ -96,11 +96,3 @@ function CheckUserData(){
         }
     }
 }
-
-
-function view_recipe(){
-    
-}
-
-
-?>
