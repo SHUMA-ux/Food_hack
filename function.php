@@ -96,3 +96,45 @@ function CheckUserData(){
         }
     }
 }
+
+function CheckUserData_2(){
+    if (!empty($_POST)) {
+        if (empty($_POST["user_name"])) {
+            echo "メールアドレスが未入力です。";
+        }
+        if (empty($_POST["password"])) {
+            echo "パスワードが未入力です。";
+        }
+        if (!empty($_POST["user_name"]) && !empty($_POST["password"])) {
+            $user_name = htmlspecialchars($_POST['user_name'], ENT_QUOTES);
+            $password = htmlspecialchars($_POST['password'], ENT_QUOTES);
+            $pdo = connect();
+            try {
+                $sql = "SELECT * FROM users WHERE user_name = :user_name";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(':user_name', $user_name);
+                $stmt->execute();
+            } catch (PDOException $e) {
+                echo 'Error: ' . $e->getMessage();
+                die();
+            }
+
+            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                if (password_verify($password, $row["password"])) {
+                    $_SESSION["user_id"] = $row['user_id'];
+                    $_SESSION["name"] = $row['name'];
+                    $_SESSION["gender"] = $row['gender'];
+                    $_SESSION["place"] = $row['id'];
+                    $_SESSION["age"] = $row['age'];
+                    $_SESSION["user_name"] = $row['user_name'];
+                    header("Location: 5_recipe_main.php");
+                    exit;
+                } else {
+                    echo "パスワードに誤りがあります。";
+                }
+            } else {
+                echo "ユーザー名かパスワードに誤りがあります。";
+            }
+        }
+    }
+}
